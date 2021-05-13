@@ -13,6 +13,7 @@ Zuev Aleksandr, 2021, all rigths reserved.*/
 #region usings
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 #endregion
 
 namespace ImageResizer
@@ -25,7 +26,7 @@ namespace ImageResizer
         /// <param name="jpgpath">Path to jpg file</param>
         /// <param name="size">Size of square</param>
         /// <returns>Path to a created image</returns>
-        public static string FitImageInSquare(string jpgpath, int size)
+        public static string FitImageInSquare(string jpgpath, int size, int quality)
         {
             string finalimgpath = "";
             using (Image curimg = Image.FromFile(jpgpath) as Bitmap)
@@ -59,9 +60,28 @@ namespace ImageResizer
                 }
 
                 finalimgpath = jpgpath.Replace(".jpg", "_" + size.ToString() + ".jpg");
-                targetBitmap.Save(finalimgpath, System.Drawing.Imaging.ImageFormat.Jpeg);
+
+                ImageCodecInfo myImageCodecInfo = GetEncoderInfo("image/jpeg");
+                Encoder myEncoder = Encoder.Quality;
+                EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, (long)quality);
+                EncoderParameters myEncoderParameters = new EncoderParameters(1);
+                myEncoderParameters.Param[0] = myEncoderParameter;
+
+                targetBitmap.Save(finalimgpath, myImageCodecInfo, myEncoderParameters);
             }
             return finalimgpath;
+        }
+        private static ImageCodecInfo GetEncoderInfo(String mimeType)
+        {
+            int j;
+            ImageCodecInfo[] encoders;
+            encoders = ImageCodecInfo.GetImageEncoders();
+            for (j = 0; j < encoders.Length; ++j)
+            {
+                if (encoders[j].MimeType == mimeType)
+                    return encoders[j];
+            }
+            return null;
         }
     }
 }

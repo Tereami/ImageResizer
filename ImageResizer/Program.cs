@@ -20,24 +20,25 @@ namespace ImageResizer
     {
         static void Main(string[] args)
         {
-            string filepath = "";
+            string filepath;
+            int size;
+            int quality;
             if (args != null && args.Length > 0)
             {
                 filepath = args[0];
-
-                int size = 300;
-                if (!int.TryParse(args[1], out size))
-                {
-                    Console.WriteLine("Invalid size argument");
-                    return;
-                }
+                size = int.Parse(args[1]);
+                quality = int.Parse(args[2]);
             } else
             {
-                Console.WriteLine("Please set the path to jpg file");
+                Console.WriteLine("The path to jpg file");
                 filepath = Console.ReadLine();
+                Console.WriteLine("Size of square");
+                size = int.Parse(Console.ReadLine());
+                Console.WriteLine("Quality");
+                quality = int.Parse(Console.ReadLine());
             }
-            
-            string finalpath = Resizer.FitImageInSquare(filepath, 100);
+
+            string finalpath = Resizer.FitImageInSquare(filepath, size, quality);
             Console.WriteLine(finalpath);
         }
     }
