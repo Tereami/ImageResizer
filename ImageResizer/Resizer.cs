@@ -27,37 +27,40 @@ namespace ImageResizer
         /// <returns>Path to a created image</returns>
         public static string FitImageInSquare(string jpgpath, int size)
         {
-            Image curimg = Image.FromFile(jpgpath) as Bitmap;
-            Rectangle curRect = new Rectangle(0, 0, curimg.Width, curimg.Height);
-            Rectangle newRect = new Rectangle();
-            Bitmap targetBitmap = new Bitmap(size, size);
-            if (curimg.Width > curimg.Height) //изображение широкое и низкое
+            string finalimgpath = "";
+            using (Image curimg = Image.FromFile(jpgpath) as Bitmap)
             {
-                double coef = (double)curimg.Width / (double)size;
-                int newheight = (int)(curimg.Height / coef);
-                int topFieldHeight = (size - newheight) / 2;
-                newRect = new Rectangle(0, topFieldHeight, size, newheight);
-            }
-            else //изображение узкое и высокое
-            {
-                double coef = (double)curimg.Height / (double)size;
-                int newwidth = (int)(curimg.Width / coef);
-                int leftFieldWidth = (size - newwidth) / 2;
-                newRect = new Rectangle(leftFieldWidth, 0, newwidth, size);
-            }
-
-            using (Bitmap sourceBitmap = new Bitmap(curimg, curimg.Width, curimg.Height))
-            {
-                using (Graphics g = Graphics.FromImage(targetBitmap))
+                Rectangle curRect = new Rectangle(0, 0, curimg.Width, curimg.Height);
+                Rectangle newRect = new Rectangle();
+                Bitmap targetBitmap = new Bitmap(size, size);
+                if (curimg.Width > curimg.Height) //изображение широкое и низкое
                 {
-                    SolidBrush sb = new SolidBrush(Color.White);
-                    g.FillRectangle(sb, 0, 0, size, size);
-                    g.DrawImage(sourceBitmap, newRect, curRect, GraphicsUnit.Pixel);
+                    double coef = (double)curimg.Width / (double)size;
+                    int newheight = (int)(curimg.Height / coef);
+                    int topFieldHeight = (size - newheight) / 2;
+                    newRect = new Rectangle(0, topFieldHeight, size, newheight);
                 }
-            }
+                else //изображение узкое и высокое
+                {
+                    double coef = (double)curimg.Height / (double)size;
+                    int newwidth = (int)(curimg.Width / coef);
+                    int leftFieldWidth = (size - newwidth) / 2;
+                    newRect = new Rectangle(leftFieldWidth, 0, newwidth, size);
+                }
 
-            string finalimgpath = jpgpath.Replace(".jpg", "_" + size.ToString() + ".jpg");
-            targetBitmap.Save(finalimgpath, System.Drawing.Imaging.ImageFormat.Jpeg);
+                using (Bitmap sourceBitmap = new Bitmap(curimg, curimg.Width, curimg.Height))
+                {
+                    using (Graphics g = Graphics.FromImage(targetBitmap))
+                    {
+                        SolidBrush sb = new SolidBrush(Color.White);
+                        g.FillRectangle(sb, 0, 0, size, size);
+                        g.DrawImage(sourceBitmap, newRect, curRect, GraphicsUnit.Pixel);
+                    }
+                }
+
+                finalimgpath = jpgpath.Replace(".jpg", "_" + size.ToString() + ".jpg");
+                targetBitmap.Save(finalimgpath, System.Drawing.Imaging.ImageFormat.Jpeg);
+            }
             return finalimgpath;
         }
     }

@@ -40,7 +40,5 @@ namespace ImageResizer
             string finalpath = Resizer.FitImageInSquare(filepath, 100);
             Console.WriteLine(finalpath);
         }
-
-        
     }
 }
